@@ -27,8 +27,12 @@ require (
 	maunium.net/go/tcell v0.2.0
 )
 
+require github.com/eyedeekay/i2pkeys v0.0.0-20220310055120-b97558c06ac8 // indirect
+
 require (
 	github.com/dlclark/regexp2 v1.4.0 // indirect
+	github.com/eyedeekay/goSam v0.32.54-0.20220330043526-35e4ae3c89b0
+	github.com/eyedeekay/sam3 v0.32.32 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect

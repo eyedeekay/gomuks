@@ -19,12 +19,16 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/eyedeekay/goSam"
+	"golang.org/x/net/proxy"
 
 	"maunium.net/go/gomuks/debug"
 	"maunium.net/go/gomuks/interface"
@@ -47,6 +51,33 @@ func main() {
 		debug.RecoverPrettyPanic = false
 		debug.DeadlockDetection = true
 	}
+	proxyDialer := proxy.FromEnvironment()
+	if proxyDialer != nil {
+		httpClient := &http.Client{
+			Transport: &http.Transport{
+				Dial: proxyDialer.Dial,
+			},
+		}
+		http.DefaultClient = httpClient
+	}
+	samBridge := os.Getenv("SAM_PROXY")
+	if len(samBridge) > 0 {
+		samDialer, err := goSam.NewDefaultClient()
+		if err != nil {
+			fmt.Printf("SAM proxy error")
+			os.Exit(1)
+		}
+		if samDialer != nil {
+			// create a transport that uses SAM to dial TCP Connections
+			httpClient := &http.Client{
+				Transport: &http.Transport{
+					Dial: samDialer.Dial,
+				},
+			}
+			http.DefaultClient = httpClient
+		}
+	}
+
 	debug.Initialize()
 	defer debug.Recover()
 
